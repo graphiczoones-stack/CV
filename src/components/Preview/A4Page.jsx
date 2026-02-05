@@ -304,22 +304,32 @@ const A4Page = () => {
                     return (displayData.skills.technical.length > 0 || displayData.skills.soft.length > 0) ? (
                         <>
                             <h2 className="section-title">Key Skills</h2>
-                            {displayData.skills.technical.length > 0 && (
-                                <div className="skills-group">
-                                    <span className="skills-label">Technical skills:</span>
-                                    {displayData.skills.technical.map((skill, idx) => (
-                                        <span key={idx} className="skills-list">{skill}</span>
-                                    ))}
-                                </div>
-                            )}
-                            {displayData.skills.soft.length > 0 && (
-                                <div className="skills-group">
-                                    <span className="skills-label">Soft skills:</span>
-                                    {displayData.skills.soft.map((skill, idx) => (
-                                        <span key={idx} className="skills-list">{skill}</span>
-                                    ))}
-                                </div>
-                            )}
+                            <div className="skills-main-container">
+                                {displayData.skills.technical.length > 0 && (
+                                    <div className="skills-group">
+                                        <span className="skills-label">Technical Skills</span>
+                                        <div className="skills-list-inline">
+                                            {displayData.skills.technical.map((skill, idx) => (
+                                                <span key={idx} className="skills-item">
+                                                    {skill}{idx < displayData.skills.technical.length - 1 && ', '}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {displayData.skills.soft.length > 0 && (
+                                    <div className="skills-group">
+                                        <span className="skills-label">Soft Skills</span>
+                                        <div className="skills-list-inline">
+                                            {displayData.skills.soft.map((skill, idx) => (
+                                                <span key={idx} className="skills-item">
+                                                    {skill}{idx < displayData.skills.soft.length - 1 && ', '}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </>
                     ) : null;
 

@@ -251,29 +251,33 @@
     margin-left: 1.25rem;
 }
 
-/* Skills */
+.skills-main-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-left: 1.25rem;
+}
+
 .skills-group {
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .skills-label {
     font-weight: 700;
     color: #000;
-    display: block;
-    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
 }
 
-.skills-list {
+.skills-list-inline {
+    display: block;
+    line-height: 1.5;
+}
+
+.skills-item {
+    font-size: 0.875rem;
     color: #000;
-    margin-left: 1.25rem;
-    display: block;
-}
-
-.skills-list::before {
-    content: '•';
-    margin-right: 0.5rem;
 }
 
 /* Courses */
