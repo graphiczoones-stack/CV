@@ -138,39 +138,38 @@ const A4Page = () => {
         languages: (cvData.languages && cvData.languages.length > 0) ? cvData.languages : DUMMY_DATA.languages,
     };
 
-    // Use shared sections from context
-    const page1Sections = Array.from(new Set(cvData.sections?.page1 || ['summary', 'education', 'experience', 'projects']));
-    let page2Sections = Array.from(new Set(cvData.sections?.page2 || ['activities', 'courses', 'skills', 'languages']));
+    // Use shared sections from context - sanitation is now handled in CvContext.jsx
+    const page1Sections = cvData.sections?.page1 || ['summary', 'education', 'experience', 'projects'];
+    const page2Sections = cvData.sections?.page2 || ['activities', 'courses', 'skills', 'languages'];
 
-    // Handle showReferences preference by including it in the layout if enabled
-    const showReferences = cvData.preferences?.showReferences;
-    const isReferencesInLayout = page1Sections.includes('references') || page2Sections.includes('references');
+    const referencesPlacement = cvData.preferences?.referencesPlacement || 'none';
+    const referencesText = cvData.preferences?.referencesText || 'References available upon request';
 
-    if (showReferences && !isReferencesInLayout) {
-        // Default placement at the end of Page 2
-        page2Sections = Array.from(new Set([...page2Sections, 'references']));
-    }
+    const renderFooter = (pageNum) => {
+        if (referencesPlacement !== `page${pageNum}`) return null;
+
+        return (
+            <div className="cv-footer">
+                <p>{referencesText}</p>
+            </div>
+        );
+    };
 
     // Responsive Scaling Logic
     const [scale, setScale] = useState(1);
 
     useEffect(() => {
         const handleResize = () => {
-            let containerWidth;
-            if (window.innerWidth < 1024) {
-                // On mobile/tablet, use window width directly as container might be transitioning or unstable
-                containerWidth = window.innerWidth;
-            } else {
-                containerWidth = document.querySelector('.preview-container')?.offsetWidth || window.innerWidth;
-            }
+            // Use window.innerWidth for scaling math to ensure linearity across all breakpoints
+            const availableWidth = window.innerWidth < 1024 ? window.innerWidth : (document.querySelector('.preview-container')?.offsetWidth || window.innerWidth);
 
-            // 210mm is approx 794px. We add some padding buffer.
-            const targetWidth = 830;
-            // Subtract more padding (48px) on mobile to ensure no cutoff
-            const padding = window.innerWidth < 768 ? 48 : 32;
-            const availableWidth = Math.max(0, containerWidth - padding);
+            // Fixed base width for A4 (210mm @ 96dpi)
+            const targetWidth = 794;
 
-            const newScale = Math.min(1, availableWidth / targetWidth);
+            // Available width with a consistent safety margin for scrollbars/toolbars
+            const finalWidth = Math.max(0, availableWidth - 24);
+
+            const newScale = Math.min(1, finalWidth / targetWidth);
             setScale(newScale);
         };
 
@@ -211,13 +210,12 @@ const A4Page = () => {
                             {displayData.education.map(edu => (
                                 <div key={edu.id} className="education-item">
                                     <div className="edu-header">
-                                        <span className="edu-degree">{edu.degree}</span>
-                                        {edu.institution && (
-                                            <>
-                                                {', '}
-                                                <span className="edu-institution">{edu.institution}</span>
-                                            </>
-                                        )}
+                                        <div className="edu-title-group">
+                                            <span className="edu-degree">{edu.degree}</span>
+                                            {edu.institution && (
+                                                <span className="edu-institution">, {edu.institution}</span>
+                                            )}
+                                        </div>
                                         {(edu.startDate || edu.endDate) && (
                                             <span className="edu-date">
                                                 ({edu.startDate}{edu.startDate && edu.endDate && ' – '}{edu.endDate})
@@ -242,13 +240,12 @@ const A4Page = () => {
                             {displayData.experience.map(exp => (
                                 <div key={exp.id} className="experience-item">
                                     <div className="exp-header">
-                                        <span className="exp-position">{exp.position}</span>
-                                        {exp.company && (
-                                            <>
-                                                {' at '}
-                                                <span className="exp-company">{exp.company}</span>
-                                            </>
-                                        )}
+                                        <div className="exp-title-group">
+                                            <span className="exp-position">{exp.position}</span>
+                                            {exp.company && (
+                                                <span className="exp-company"> at {exp.company}</span>
+                                            )}
+                                        </div>
                                         {(exp.startDate || exp.endDate) && (
                                             <span className="exp-date">
                                                 ({exp.startDate}{exp.startDate && exp.endDate && ' – '}{exp.endDate})
@@ -376,15 +373,6 @@ const A4Page = () => {
                         </>
                     ) : null;
 
-                case 'references':
-                    return showReferences ? (
-                        <>
-                            <h2 className="section-title" style={{ textAlign: 'center' }}>References</h2>
-                            <div style={{ textAlign: 'center', padding: '0.5rem 0' }}>
-                                <p style={{ fontStyle: 'italic', color: '#666' }}>References available upon request</p>
-                            </div>
-                        </>
-                    ) : null;
 
                 default:
                     return null;
@@ -441,43 +429,56 @@ const A4Page = () => {
             )}
 
             <div
-                className="a4-pages-wrapper"
+                className="a4-pages-container"
                 style={{
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'top center',
-                    // Compensate for the space lost by scaling down
-                    marginBottom: `-${(1 - scale) * 100}%`
+                    width: '100%',
+                    height: `calc((${2 * 1123}px + 2rem) * ${scale})`,
+                    overflow: 'visible',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
                 }}
             >
-                {/* Page 1 */}
-                <div>
-                    <div className="a4-page" id="cv-content">
-                        {renderHeader()}
-                        {page1Sections.map((sectionId, index) =>
-                            renderSection(sectionId, index, page1Sections.length, 1)
-                        )}
+                <div
+                    className="a4-pages-wrapper"
+                    style={{
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'top center',
+                        width: '794px'
+                    }}
+                >
+                    {/* Page 1 */}
+                    <div>
+                        <div className="a4-page" id="cv-content">
+                            {renderHeader()}
+                            {page1Sections.map((sectionId, index) =>
+                                renderSection(sectionId, index, page1Sections.length, 1)
+                            )}
+                            {renderFooter(1)}
+                        </div>
                     </div>
-                </div>
 
-                {/* Page 2 */}
-                <div>
-                    <div className="a4-page" id="cv-page-2">
-                        {page2Sections.map((sectionId, index) =>
-                            renderSection(sectionId, index, page2Sections.length, 2)
-                        )}
-                        {page2Sections.length === 0 && (
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                height: '100%',
-                                color: '#9ca3af',
-                                fontStyle: 'italic',
-                                fontSize: '0.875rem'
-                            }}>
-                                Content can be moved here
-                            </div>
-                        )}
+                    {/* Page 2 */}
+                    <div>
+                        <div className="a4-page" id="cv-page-2">
+                            {page2Sections.map((sectionId, index) =>
+                                renderSection(sectionId, index, page2Sections.length, 2)
+                            )}
+                            {renderFooter(2)}
+                            {page2Sections.length === 0 && (
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    height: '100%',
+                                    color: '#9ca3af',
+                                    fontStyle: 'italic',
+                                    fontSize: '0.875rem'
+                                }}>
+                                    Content can be moved here
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

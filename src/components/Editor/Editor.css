@@ -248,6 +248,7 @@
     font-size: 0.85rem;
     color: var(--text-medium);
     margin: 0;
+    text-align: left;
 }
 
 .switch {
@@ -277,10 +278,10 @@
 .slider:before {
     position: absolute;
     content: "";
-    height: 18px;
-    width: 18px;
-    left: 4px;
-    bottom: 4px;
+    height: 16px;
+    width: 16px;
+    left: 5px;
+    bottom: 5px;
     background-color: white;
     transition: .4s;
 }
@@ -303,6 +304,39 @@ input:checked+.slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+/* Placement Selector */
+.placement-selector {
+    display: flex;
+    background: #f3f4f6;
+    padding: 4px;
+    border-radius: 12px;
+    gap: 4px;
+    margin-bottom: 1rem;
+}
+
+.placement-btn {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-medium);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.placement-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.placement-btn.active {
+    background: white;
+    color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* List Items */
@@ -377,15 +411,20 @@ input:checked+.slider:before {
     }
 
     .toggle-item {
-        padding: 1rem;
+        padding: 0.875rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
     }
 
     .toggle-info .editor-section-title {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        margin-bottom: 0.125rem;
     }
 
     .toggle-description {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        line-height: 1.3;
     }
 }
 

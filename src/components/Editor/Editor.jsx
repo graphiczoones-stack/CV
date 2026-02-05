@@ -212,10 +212,10 @@ const Editor = () => {
                         <Plus size={16} /> Add Experience
                     </button>
                 </div>
-                {cvData.experience.map((exp) => (
+                {cvData.experience.map((exp, index) => (
                     <div key={exp.id} className="list-item">
                         <div className="list-item-header">
-                            <h3>Position {exp.id}</h3>
+                            <h3>Experience {index + 1}</h3>
                             <button
                                 className="delete-btn"
                                 onClick={() => removeExperience(exp.id)}
@@ -631,22 +631,42 @@ const Editor = () => {
                 ))}
             </section>
 
-            {/* Additional Settings */}
+            {/* References Settings */}
             <section className="editor-section toggle-section">
-                <div className="toggle-item">
-                    <div className="toggle-info">
-                        <h3 className="editor-section-title">References Section</h3>
-                        <p className="toggle-description">Enable a fixed "References available upon request" section.</p>
-                    </div>
-                    <label className="switch">
-                        <input
-                            type="checkbox"
-                            checked={cvData.preferences?.showReferences || false}
-                            onChange={(e) => updatePreferences('showReferences', e.target.checked)}
-                        />
-                        <span className="slider round"></span>
-                    </label>
+                <div className="section-header">
+                    <h2 className="editor-section-title">References</h2>
                 </div>
+                <div className="placement-selector">
+                    <button
+                        className={`placement-btn ${(!cvData.preferences?.referencesPlacement || cvData.preferences?.referencesPlacement === 'none') ? 'active' : ''}`}
+                        onClick={() => updatePreferences('referencesPlacement', 'none')}
+                    >
+                        None
+                    </button>
+                    <button
+                        className={`placement-btn ${cvData.preferences?.referencesPlacement === 'page1' ? 'active' : ''}`}
+                        onClick={() => updatePreferences('referencesPlacement', 'page1')}
+                    >
+                        Page 1
+                    </button>
+                    <button
+                        className={`placement-btn ${cvData.preferences?.referencesPlacement === 'page2' ? 'active' : ''}`}
+                        onClick={() => updatePreferences('referencesPlacement', 'page2')}
+                    >
+                        Page 2
+                    </button>
+                </div>
+                {cvData.preferences?.referencesPlacement && cvData.preferences?.referencesPlacement !== 'none' && (
+                    <div className="form-group" style={{ marginTop: '1rem' }}>
+                        <label>References Note</label>
+                        <input
+                            type="text"
+                            value={cvData.preferences?.referencesText || 'References available upon request'}
+                            onChange={(e) => updatePreferences('referencesText', e.target.value)}
+                            placeholder="References available upon request"
+                        />
+                    </div>
+                )}
             </section>
 
         </div>

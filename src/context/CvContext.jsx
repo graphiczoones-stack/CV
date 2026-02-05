@@ -36,6 +36,7 @@ const INITIAL_DATA = {
   },
   preferences: {
     showReferences: false,
+    referencesPlacement: 'none', // 'none', 'page1', 'page2'
   },
 };
 
@@ -50,7 +51,7 @@ export const CvProvider = ({ children }) => {
       // SANITATION: Ensure all sections exist exactly once
       const allKnownSections = [
         'summary', 'education', 'experience', 'projects',
-        'activities', 'courses', 'skills', 'languages', 'references'
+        'activities', 'courses', 'skills', 'languages'
       ];
 
       let p1 = Array.isArray(parsed.sections?.page1) ? parsed.sections.page1 : INITIAL_DATA.sections.page1;

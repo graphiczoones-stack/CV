@@ -1,10 +1,12 @@
 .a4-container {
     background: #e5e7eb;
-    padding: 2rem;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    padding: 1rem 0;
+    overflow-x: hidden;
 }
 
 .page-warning {
@@ -14,23 +16,45 @@
     padding: 1rem 1.5rem;
     border-radius: 8px;
     margin-bottom: 1rem;
-    max-width: 210mm;
+    max-width: 794px;
     font-weight: 500;
     font-size: 0.9rem;
 }
 
 .a4-page {
-    width: 210mm;
-    height: 297mm;
+    width: 794px !important;
+    min-width: 794px !important;
+    max-width: 794px !important;
+    height: 1123px !important;
     background: white;
-    padding: 1mm 5mm;
+    padding: 38px 57px;
+    /* approx 10mm 15mm */
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     margin: 0 auto 2rem auto;
     box-sizing: border-box;
     page-break-after: always;
     page-break-inside: avoid;
     position: relative;
-    /* overflow: hidden; Removed to allow controls to show outside */
+    display: flex;
+    flex-direction: column;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    flex-shrink: 0;
+}
+
+.cv-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #000;
+    text-align: center;
+    width: 100%;
+}
+
+.cv-footer p {
+    font-style: italic;
+    color: #000;
+    font-size: 0.85rem;
+    margin: 0;
 }
 
 .a4-page:last-child {
@@ -176,11 +200,7 @@
 }
 
 .exp-date {
-    font-size: 0.85rem;
-    color: #000;
-    font-weight: 400;
-    float: right;
-    font-style: italic;
+    /* Handled by flex parent */
 }
 
 .exp-responsibilities {
@@ -221,11 +241,7 @@
 }
 
 .edu-date {
-    font-size: 0.85rem;
-    color: #000;
-    font-weight: 400;
-    float: right;
-    font-style: italic;
+    /* Handled by flex parent */
 }
 
 .edu-description {
@@ -345,30 +361,31 @@
 
 
 /* Responsive */
-@media screen and (max-width: 768px) {
-    .a4-container {
-        padding: 1rem 0;
-        /* Reduce padding on mobile */
-        overflow-x: hidden;
-        /* Prevent horizontal scroll */
-    }
+.edu-header,
+.exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.375rem;
+}
 
-    /* We removed the .a4-page override here because we are now scaling it with JS */
+.edu-title-group,
+.exp-title-group {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.25rem;
+    align-items: baseline;
+}
 
-    .exp-date,
-    .edu-date {
-        float: none;
-        display: block;
-        margin-top: 0.25rem;
-    }
-
-    .drag-handle {
-        position: relative;
-        left: 0;
-        opacity: 1;
-        display: inline-block;
-        margin-right: 0.5rem;
-    }
+.edu-date,
+.exp-date {
+    font-size: 0.85rem;
+    color: #000;
+    font-weight: 400;
+    font-style: italic;
+    white-space: nowrap;
+    text-align: right;
+    margin-left: 1rem;
 }
 
 @media print {
