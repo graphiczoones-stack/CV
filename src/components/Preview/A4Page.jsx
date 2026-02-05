@@ -139,6 +139,14 @@ const A4Page = () => {
 
     const displayData = isDemoMode ? DUMMY_DATA : cvData;
 
+    const formatUrl = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            return url;
+        }
+        return `https://${url}`;
+    };
+
     // Use shared sections from context - sanitation is now handled in CvContext.jsx
     const page1Sections = cvData.sections?.page1 || ['summary', 'education', 'experience', 'projects'];
     const page2Sections = cvData.sections?.page2 || ['activities', 'courses', 'skills', 'languages'];
@@ -281,7 +289,7 @@ const A4Page = () => {
                                         <span>
                                             <span className="course-name" style={{ fontWeight: 'bold' }}>
                                                 {course.link ? (
-                                                    <a href={course.link} target="_blank" rel="noopener noreferrer" className="cv-link">
+                                                    <a href={formatUrl(course.link)} target="_blank" rel="noopener noreferrer" className="cv-link">
                                                         {course.name}
                                                     </a>
                                                 ) : (
@@ -344,7 +352,7 @@ const A4Page = () => {
                                         {project.link && (
                                             <>
                                                 {' - '}
-                                                <a href={project.link} target="_blank" rel="noopener noreferrer" className="cv-link">
+                                                <a href={formatUrl(project.link)} target="_blank" rel="noopener noreferrer" className="cv-link">
                                                     {project.link}
                                                 </a>
                                             </>
@@ -422,7 +430,7 @@ const A4Page = () => {
                     {displayData.personal.links.map((link, idx) => (
                         <span key={link.id}>
                             {idx > 0 && <span className="separator-dot"> • </span>}
-                            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cv-link">
+                            <a href={formatUrl(link.url)} target="_blank" rel="noopener noreferrer" className="cv-link">
                                 {link.label}
                             </a>
                         </span>
