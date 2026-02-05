@@ -78,7 +78,6 @@
 /* Header */
 .cv-header {
     text-align: center;
-    padding-bottom: 1rem;
 }
 
 .cv-name {
@@ -150,7 +149,7 @@
 
 /* Sections */
 .cv-section {
-    margin-bottom: 1.1rem;
+    margin-bottom: 0.3rem;
     position: relative;
     page-break-inside: avoid;
 }
