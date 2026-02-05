@@ -1,0 +1,35 @@
+.main-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.editor-container {
+    border-right: 1px solid var(--border-color);
+}
+
+.preview-container {
+    overflow-y: auto;
+}
+
+/* Responsive */
+@media screen and (max-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+    }
+
+    .editor-container {
+        border-right: none;
+        border-bottom: 2px solid var(--border-color);
+        width: 100%;
+    }
+
+    .preview-container {
+        overflow-y: visible;
+        width: 100%;
+        overflow-x: hidden;
+    }
+}
