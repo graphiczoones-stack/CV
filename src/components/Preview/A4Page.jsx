@@ -126,17 +126,18 @@ const A4Page = () => {
 
     // Determine Data to Display (Real vs Dummy)
     const hasPersonalData = cvData.personal.name || cvData.personal.title || cvData.personal.email || cvData.personal.phone || cvData.personal.summary;
+    const hasEducation = cvData.education.length > 0;
+    const hasExperience = cvData.experience.length > 0;
+    const hasSkills = (cvData.skills?.technical?.length > 0 || cvData.skills?.soft?.length > 0);
+    const hasProjects = (cvData.projects && cvData.projects.length > 0);
+    const hasCourses = (cvData.courses && cvData.courses.length > 0);
+    const hasActivities = (cvData.activities && cvData.activities.length > 0);
+    const hasLanguages = (cvData.languages && cvData.languages.length > 0);
 
-    const displayData = {
-        personal: hasPersonalData ? cvData.personal : DUMMY_DATA.personal,
-        education: cvData.education.length > 0 ? cvData.education : DUMMY_DATA.education,
-        experience: cvData.experience.length > 0 ? cvData.experience : DUMMY_DATA.experience,
-        skills: (cvData.skills.technical.length > 0 || cvData.skills.soft.length > 0) ? cvData.skills : DUMMY_DATA.skills,
-        courses: cvData.courses.length > 0 ? cvData.courses : DUMMY_DATA.courses,
-        projects: (cvData.projects && cvData.projects.length > 0) ? cvData.projects : DUMMY_DATA.projects,
-        activities: (cvData.activities && cvData.activities.length > 0) ? cvData.activities : DUMMY_DATA.activities,
-        languages: (cvData.languages && cvData.languages.length > 0) ? cvData.languages : DUMMY_DATA.languages,
-    };
+    // If the user has entered ANY information, we exit demo mode
+    const isDemoMode = !hasPersonalData && !hasEducation && !hasExperience && !hasSkills && !hasProjects && !hasCourses && !hasActivities && !hasLanguages;
+
+    const displayData = isDemoMode ? DUMMY_DATA : cvData;
 
     // Use shared sections from context - sanitation is now handled in CvContext.jsx
     const page1Sections = cvData.sections?.page1 || ['summary', 'education', 'experience', 'projects'];
