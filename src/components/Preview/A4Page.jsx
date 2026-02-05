@@ -87,6 +87,10 @@ const DUMMY_DATA = {
             description: 'Organized monthly meetups for local developers.',
         }
     ],
+    languages: [
+        { id: 1, name: 'Arabic', level: 'Native' },
+        { id: 2, name: 'English', level: 'Fluent' },
+    ],
 };
 
 // Section Component with Arrow Controls
@@ -117,13 +121,12 @@ const CvSection = ({ id, children, onMoveUp, onMoveDown, isFirst, isLast }) => {
 };
 
 const A4Page = () => {
-    const { cvData } = useCv();
+    const { cvData, moveSection } = useCv();
     const [pageWarning, setPageWarning] = useState(false);
 
     // Determine Data to Display (Real vs Dummy)
     const hasPersonalData = cvData.personal.name || cvData.personal.title || cvData.personal.email || cvData.personal.phone || cvData.personal.summary;
 
-    // Create the display object merging real and dummy data logic
     const displayData = {
         personal: hasPersonalData ? cvData.personal : DUMMY_DATA.personal,
         education: cvData.education.length > 0 ? cvData.education : DUMMY_DATA.education,
@@ -132,21 +135,21 @@ const A4Page = () => {
         courses: cvData.courses.length > 0 ? cvData.courses : DUMMY_DATA.courses,
         projects: (cvData.projects && cvData.projects.length > 0) ? cvData.projects : DUMMY_DATA.projects,
         activities: (cvData.activities && cvData.activities.length > 0) ? cvData.activities : DUMMY_DATA.activities,
+        languages: (cvData.languages && cvData.languages.length > 0) ? cvData.languages : DUMMY_DATA.languages,
     };
 
-    // Split sections between two pages
-    const [page1Sections, setPage1Sections] = useState([
-        'summary',
-        'education',
-        'experience',
-        'projects',
-    ]);
+    // Use shared sections from context
+    const page1Sections = Array.from(new Set(cvData.sections?.page1 || ['summary', 'education', 'experience', 'projects']));
+    let page2Sections = Array.from(new Set(cvData.sections?.page2 || ['activities', 'courses', 'skills', 'languages']));
 
-    const [page2Sections, setPage2Sections] = useState([
-        'activities',
-        'courses',
-        'skills',
-    ]);
+    // Handle showReferences preference by including it in the layout if enabled
+    const showReferences = cvData.preferences?.showReferences;
+    const isReferencesInLayout = page1Sections.includes('references') || page2Sections.includes('references');
+
+    if (showReferences && !isReferencesInLayout) {
+        // Default placement at the end of Page 2
+        page2Sections = Array.from(new Set([...page2Sections, 'references']));
+    }
 
     // Responsive Scaling Logic
     const [scale, setScale] = useState(1);
@@ -178,54 +181,7 @@ const A4Page = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const moveSection = (sectionId, direction) => {
-        const inPage1 = page1Sections.includes(sectionId);
-        const inPage2 = page2Sections.includes(sectionId);
-
-        if (inPage1) {
-            const index = page1Sections.indexOf(sectionId);
-            if (direction === 'up') {
-                if (index > 0) {
-                    // Move up within Page 1
-                    const newSections = [...page1Sections];
-                    [newSections[index], newSections[index - 1]] = [newSections[index - 1], newSections[index]];
-                    setPage1Sections(newSections);
-                }
-            } else {
-                if (index < page1Sections.length - 1) {
-                    // Move down within Page 1
-                    const newSections = [...page1Sections];
-                    [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
-                    setPage1Sections(newSections);
-                } else {
-                    // Move to Page 2 (Top)
-                    setPage1Sections(page1Sections.filter(id => id !== sectionId));
-                    setPage2Sections([sectionId, ...page2Sections]);
-                }
-            }
-        } else if (inPage2) {
-            const index = page2Sections.indexOf(sectionId);
-            if (direction === 'up') {
-                if (index > 0) {
-                    // Move up within Page 2
-                    const newSections = [...page2Sections];
-                    [newSections[index], newSections[index - 1]] = [newSections[index - 1], newSections[index]];
-                    setPage2Sections(newSections);
-                } else {
-                    // Move to Page 1 (Bottom)
-                    setPage2Sections(page2Sections.filter(id => id !== sectionId));
-                    setPage1Sections([...page1Sections, sectionId]);
-                }
-            } else {
-                if (index < page2Sections.length - 1) {
-                    // Move down within Page 2
-                    const newSections = [...page2Sections];
-                    [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
-                    setPage2Sections(newSections);
-                }
-            }
-        }
-    };
+    // moveSection is now used directly from context
 
     // Section renderers
     const renderSection = (sectionId, index, totalItems, pageNum) => {
@@ -398,10 +354,35 @@ const A4Page = () => {
                             <h2 className="section-title">Extracurricular Activities</h2>
                             {displayData.activities.map(activity => (
                                 <div key={activity.id} className="activity-item">
-                                    <div>{activity.name}</div>
-                                    {activity.role && <div>{activity.role}</div>}
+                                    <div style={{ fontWeight: 'bold' }}>{activity.name}</div>
+                                    {activity.role && <div style={{ fontStyle: 'italic' }}>{activity.role}</div>}
+                                    {activity.description && <p style={{ marginTop: '0.25rem' }}>{activity.description}</p>}
                                 </div>
                             ))}
+                        </>
+                    ) : null;
+
+                case 'languages':
+                    return (displayData.languages && displayData.languages.length > 0) ? (
+                        <>
+                            <h2 className="section-title">Languages</h2>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                {displayData.languages.map(lang => (
+                                    <div key={lang.id}>
+                                        <span style={{ fontWeight: 'bold' }}>{lang.name}</span>: {lang.level}
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    ) : null;
+
+                case 'references':
+                    return showReferences ? (
+                        <>
+                            <h2 className="section-title" style={{ textAlign: 'center' }}>References</h2>
+                            <div style={{ textAlign: 'center', padding: '0.5rem 0' }}>
+                                <p style={{ fontStyle: 'italic', color: '#666' }}>References available upon request</p>
+                            </div>
                         </>
                     ) : null;
 
@@ -475,11 +456,6 @@ const A4Page = () => {
                         {page1Sections.map((sectionId, index) =>
                             renderSection(sectionId, index, page1Sections.length, 1)
                         )}
-                        {cvData.preferences?.referencesPage === 'page1' && (
-                            <div className="references-section">
-                                <p className="references-text">References available upon request</p>
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -500,11 +476,6 @@ const A4Page = () => {
                                 fontSize: '0.875rem'
                             }}>
                                 Content can be moved here
-                            </div>
-                        )}
-                        {cvData.preferences?.referencesPage === 'page2' && (
-                            <div className="references-section">
-                                <p className="references-text">References available upon request</p>
                             </div>
                         )}
                     </div>

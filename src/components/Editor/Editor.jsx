@@ -56,8 +56,27 @@ const Editor = () => {
         addActivity,
         updateActivity,
         removeActivity,
+        addLanguage,
+        updateLanguage,
+        removeLanguage,
         updatePreferences,
     } = useCv();
+
+    const page2Sections = cvData.sections?.page2 || ['activities', 'courses', 'skills'];
+    const isSectionActive = (sectionId) => {
+        switch (sectionId) {
+            case 'summary': return !!cvData.personal.summary;
+            case 'education': return cvData.education.length > 0;
+            case 'experience': return cvData.experience.length > 0;
+            case 'projects': return (cvData.projects || []).length > 0;
+            case 'activities': return (cvData.activities || []).length > 0;
+            case 'courses': return cvData.courses.length > 0;
+            case 'skills': return (cvData.skills?.technical?.length > 0 || cvData.skills?.soft?.length > 0);
+            default: return false;
+        }
+    };
+    const isPage2Active = page2Sections.some(isSectionActive);
+    const targetPageLabel = isPage2Active ? 'Page 2' : 'Page 1';
 
     const handleResponsibilityChange = (expId, index, value) => {
         const exp = cvData.experience.find(e => e.id === expId);
@@ -292,10 +311,10 @@ const Editor = () => {
                         <Plus size={16} /> Add Education
                     </button>
                 </div>
-                {cvData.education.map((edu) => (
+                {cvData.education.map((edu, index) => (
                     <div key={edu.id} className="list-item">
                         <div className="list-item-header">
-                            <h3>Education {edu.id}</h3>
+                            <h3>Education {index + 1}</h3>
                             <button
                                 className="delete-btn"
                                 onClick={() => removeEducation(edu.id)}
@@ -470,10 +489,10 @@ const Editor = () => {
                         <Plus size={16} /> Add Project
                     </button>
                 </div>
-                {(cvData.projects || []).map((project) => (
+                {(cvData.projects || []).map((project, index) => (
                     <div key={project.id} className="list-item">
                         <div className="list-item-header">
-                            <h3>Project {project.id}</h3>
+                            <h3>Project {index + 1}</h3>
                             <button
                                 className="delete-btn"
                                 onClick={() => removeProject(project.id)}
@@ -520,10 +539,10 @@ const Editor = () => {
                         <Plus size={16} /> Add Activity
                     </button>
                 </div>
-                {(cvData.activities || []).map((activity) => (
+                {(cvData.activities || []).map((activity, index) => (
                     <div key={activity.id} className="list-item">
                         <div className="list-item-header">
-                            <h3>Activity {activity.id}</h3>
+                            <h3>Activity {index + 1}</h3>
                             <button
                                 className="delete-btn"
                                 onClick={() => removeActivity(activity.id)}
@@ -549,42 +568,84 @@ const Editor = () => {
                                 placeholder="Photographer Volunteer"
                             />
                         </div>
+                        <div className="form-group">
+                            <label>Description</label>
+                            <textarea
+                                rows="3"
+                                value={activity.description}
+                                onChange={(e) => updateActivity(activity.id, { description: e.target.value })}
+                                placeholder="Describe your responsibilities or achievements..."
+                            />
+                        </div>
+                    </div>
+                ))}
+            </section>
+
+            {/* Languages */}
+            <section className="editor-section">
+                <div className="section-header">
+                    <h2 className="editor-section-title">Languages</h2>
+                    <button className="add-btn" onClick={addLanguage}>
+                        <Plus size={16} /> Add Language
+                    </button>
+                </div>
+                {(cvData.languages || []).map((lang, index) => (
+                    <div key={lang.id} className="list-item">
+                        <div className="list-item-header">
+                            <h3>Language {index + 1}</h3>
+                            <button
+                                className="delete-btn"
+                                onClick={() => removeLanguage(lang.id)}
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
+                        <div className="form-grid">
+                            <div className="form-group">
+                                <label>Language</label>
+                                <input
+                                    type="text"
+                                    value={lang.name}
+                                    onChange={(e) => updateLanguage(lang.id, { name: e.target.value })}
+                                    placeholder="English"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Proficiency</label>
+                                <select
+                                    value={lang.level}
+                                    onChange={(e) => updateLanguage(lang.id, { level: e.target.value })}
+                                >
+                                    <option value="Native">Native</option>
+                                    <option value="Fluent">Fluent</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Basic">Basic</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </section>
 
             {/* Additional Settings */}
             <section className="editor-section toggle-section">
-                <div className="toggle-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
+                <div className="toggle-item">
                     <div className="toggle-info">
-                        <h3 className="editor-section-title">References</h3>
-                        <p className="toggle-description">Where should "References available upon request" appear?</p>
+                        <h3 className="editor-section-title">References Section</h3>
+                        <p className="toggle-description">Enable a fixed "References available upon request" section.</p>
                     </div>
-                    <div className="segmented-control" style={{ display: 'flex', gap: '0.5rem', width: '100%', background: '#eee', padding: '4px', borderRadius: '50px' }}>
-                        {['none', 'page1', 'page2'].map((option) => (
-                            <button
-                                key={option}
-                                onClick={() => updatePreferences('referencesPage', option)}
-                                style={{
-                                    flex: 1,
-                                    padding: '8px 12px',
-                                    borderRadius: '50px',
-                                    border: 'none',
-                                    fontSize: '0.85rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    background: (cvData.preferences?.referencesPage || 'none') === option ? '#fff' : 'transparent',
-                                    color: (cvData.preferences?.referencesPage || 'none') === option ? '#2563eb' : '#666',
-                                    boxShadow: (cvData.preferences?.referencesPage || 'none') === option ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
-                                    transition: 'all 0.2s'
-                                }}
-                            >
-                                {option === 'none' ? 'None' : option === 'page1' ? 'Page 1' : 'Page 2'}
-                            </button>
-                        ))}
-                    </div>
+                    <label className="switch">
+                        <input
+                            type="checkbox"
+                            checked={cvData.preferences?.showReferences || false}
+                            onChange={(e) => updatePreferences('showReferences', e.target.checked)}
+                        />
+                        <span className="slider round"></span>
+                    </label>
                 </div>
             </section>
+
         </div>
     );
 };

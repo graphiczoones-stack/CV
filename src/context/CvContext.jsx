@@ -29,15 +29,70 @@ const INITIAL_DATA = {
   courses: [],
   projects: [],
   activities: [],
+  languages: [],
+  sections: {
+    page1: ['summary', 'education', 'experience', 'projects'],
+    page2: ['activities', 'courses', 'skills', 'languages'],
+  },
   preferences: {
-    referencesPage: 'none',
+    showReferences: false,
   },
 };
 
 export const CvProvider = ({ children }) => {
   const [cvData, setCvData] = useState(() => {
-    const savedData = localStorage.getItem('cvData');
-    return savedData ? JSON.parse(savedData) : INITIAL_DATA;
+    try {
+      const savedData = localStorage.getItem('cvData');
+      if (!savedData) return INITIAL_DATA;
+
+      const parsed = JSON.parse(savedData);
+
+      // SANITATION: Ensure all sections exist exactly once
+      const allKnownSections = [
+        'summary', 'education', 'experience', 'projects',
+        'activities', 'courses', 'skills', 'languages', 'references'
+      ];
+
+      let p1 = Array.isArray(parsed.sections?.page1) ? parsed.sections.page1 : INITIAL_DATA.sections.page1;
+      let p2 = Array.isArray(parsed.sections?.page2) ? parsed.sections.page2 : INITIAL_DATA.sections.page2;
+
+      const seen = new Set();
+      const finalP1 = [];
+      const finalP2 = [];
+
+      p1.forEach(s => {
+        if (allKnownSections.includes(s) && !seen.has(s)) {
+          finalP1.push(s);
+          seen.add(s);
+        }
+      });
+
+      p2.forEach(s => {
+        if (allKnownSections.includes(s) && !seen.has(s)) {
+          finalP2.push(s);
+          seen.add(s);
+        }
+      });
+
+      // Add missing sections to page 2 (including new ones like languages/references)
+      allKnownSections.forEach(s => {
+        if (!seen.has(s)) {
+          finalP2.push(s);
+          seen.add(s);
+        }
+      });
+
+      return {
+        ...INITIAL_DATA,
+        ...parsed,
+        personal: { ...INITIAL_DATA.personal, ...(parsed.personal || {}) },
+        sections: { page1: finalP1, page2: finalP2 },
+        preferences: { ...INITIAL_DATA.preferences, ...(parsed.preferences || {}) }
+      };
+    } catch (e) {
+      console.error('Error loading saved CV data:', e);
+      return INITIAL_DATA;
+    }
   });
 
   useEffect(() => {
@@ -209,6 +264,32 @@ export const CvProvider = ({ children }) => {
     }));
   };
 
+  const addLanguage = () => {
+    setCvData(prev => ({
+      ...prev,
+      languages: [
+        ...(prev.languages || []),
+        { id: Date.now(), name: '', level: 'Fluent' },
+      ],
+    }));
+  };
+
+  const updateLanguage = (id, updates) => {
+    setCvData(prev => ({
+      ...prev,
+      languages: (prev.languages || []).map(item =>
+        item.id === id ? { ...item, ...updates } : item
+      ),
+    }));
+  };
+
+  const removeLanguage = (id) => {
+    setCvData(prev => ({
+      ...prev,
+      languages: (prev.languages || []).filter(item => item.id !== id),
+    }));
+  };
+
   const addLink = () => {
     const newId = Math.max(...(cvData.personal.links || []).map(l => l.id), 0) + 1;
     setCvData(prev => ({
@@ -245,6 +326,65 @@ export const CvProvider = ({ children }) => {
     }));
   };
 
+  const moveSection = (sectionId, direction) => {
+    setCvData(prev => {
+      const page1 = [...(prev.sections?.page1 || [])];
+      const page2 = [...(prev.sections?.page2 || [])];
+
+      const inPage1 = page1.includes(sectionId);
+      const inPage2 = page2.includes(sectionId);
+
+      if (inPage1) {
+        const index = page1.indexOf(sectionId);
+        if (direction === 'up') {
+          if (index > 0) {
+            [page1[index], page1[index - 1]] = [page1[index - 1], page1[index]];
+          }
+        } else {
+          if (index < page1.length - 1) {
+            [page1[index], page1[index + 1]] = [page1[index + 1], page1[index]];
+          } else {
+            // Move to Page 2 (Top)
+            const filtered1 = page1.filter(id => id !== sectionId);
+            return {
+              ...prev,
+              sections: {
+                page1: filtered1,
+                page2: [sectionId, ...page2]
+              }
+            };
+          }
+        }
+      } else if (inPage2) {
+        const index = page2.indexOf(sectionId);
+        if (direction === 'up') {
+          if (index > 0) {
+            [page2[index], page2[index - 1]] = [page2[index - 1], page2[index]];
+          } else {
+            // Move to Page 1 (Bottom)
+            const filtered2 = page2.filter(id => id !== sectionId);
+            return {
+              ...prev,
+              sections: {
+                page1: [...page1, sectionId],
+                page2: filtered2
+              }
+            };
+          }
+        } else {
+          if (index < page2.length - 1) {
+            [page2[index], page2[index + 1]] = [page2[index + 1], page2[index]];
+          }
+        }
+      }
+
+      return {
+        ...prev,
+        sections: { page1, page2 }
+      };
+    });
+  };
+
   const updatePreferences = (field, value) => {
     setCvData(prev => ({
       ...prev,
@@ -273,9 +413,13 @@ export const CvProvider = ({ children }) => {
         addActivity,
         updateActivity,
         removeActivity,
+        addLanguage,
+        updateLanguage,
+        removeLanguage,
         addLink,
         updateLink,
         removeLink,
+        moveSection,
         updatePreferences,
       }}
     >
