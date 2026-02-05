@@ -1,6 +1,7 @@
 import { useCv } from '../../context/CvContext';
 import { Plus, Trash2 } from 'lucide-react';
 import { exportToPDF } from '../../utils/pdfExport';
+import Swal from 'sweetalert2';
 import './Editor.css';
 import DownloadDropdown from './DownloadDropdown';
 
@@ -8,6 +9,29 @@ const Editor = () => {
     const handleDownloadPDF = async (option) => {
         if (option) {
             await exportToPDF(option, 'My_CV.pdf');
+
+            // Show SweetAlert popup after download
+            Swal.fire({
+                title: 'Check ATS Score',
+                text: 'Optimize your CV for Applicant Tracking Systems to maximize your hireability.',
+                imageUrl: '/logo.svg',
+                imageWidth: 80,
+                imageAlt: 'Logo',
+                showCancelButton: true,
+                confirmButtonText: 'Check on JobScan',
+                cancelButtonText: 'Maybe Later',
+                confirmButtonColor: '#2563eb', // Site's primary blue
+                customClass: {
+                    popup: 'premium-popup',
+                    confirmButton: 'swal-confirm-btn',
+                    cancelButton: 'swal-cancel-btn'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.open('https://www.jobscan.co', '_blank');
+                }
+            });
         }
     };
     const {
