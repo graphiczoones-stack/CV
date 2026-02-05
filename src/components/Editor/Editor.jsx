@@ -419,8 +419,11 @@ const Editor = () => {
                         <Plus size={16} /> Add Course
                     </button>
                 </div>
-                {cvData.courses.map((course) => (
+                {(cvData.courses || []).map((course, index) => (
                     <div key={course.id} className="list-item-compact">
+                        <div className="list-item-header">
+                            <h3>Certification {index + 1}</h3>
+                        </div>
                         <div className="form-row">
                             <div className="form-group flex-2">
                                 <label>Course/Certification Name</label>

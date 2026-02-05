@@ -234,9 +234,10 @@
     justify-content: space-between;
     align-items: center;
     background: #f9fafb;
-    padding: 1.25rem;
+    padding: 1rem 1.25rem;
     border-radius: 12px;
     border: 1px solid var(--border-color);
+    gap: 1rem;
 }
 
 .toggle-info .editor-section-title {
@@ -373,6 +374,18 @@ input:checked+.slider:before {
         bottom: 0;
         right: 0;
         width: 100%;
+    }
+
+    .toggle-item {
+        padding: 1rem;
+    }
+
+    .toggle-info .editor-section-title {
+        font-size: 1rem;
+    }
+
+    .toggle-description {
+        font-size: 0.75rem;
     }
 }
 
