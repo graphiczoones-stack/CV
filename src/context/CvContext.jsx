@@ -30,7 +30,7 @@ const INITIAL_DATA = {
   projects: [],
   activities: [],
   preferences: {
-    showReferences: false,
+    referencesPage: 'none',
   },
 };
 

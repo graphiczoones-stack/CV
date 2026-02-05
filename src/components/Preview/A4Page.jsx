@@ -475,6 +475,11 @@ const A4Page = () => {
                         {page1Sections.map((sectionId, index) =>
                             renderSection(sectionId, index, page1Sections.length, 1)
                         )}
+                        {cvData.preferences?.referencesPage === 'page1' && (
+                            <div className="references-section">
+                                <p className="references-text">References available upon request</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -497,7 +502,7 @@ const A4Page = () => {
                                 Content can be moved here
                             </div>
                         )}
-                        {cvData.preferences?.showReferences && (
+                        {cvData.preferences?.referencesPage === 'page2' && (
                             <div className="references-section">
                                 <p className="references-text">References available upon request</p>
                             </div>

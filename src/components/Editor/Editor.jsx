@@ -555,19 +555,34 @@ const Editor = () => {
 
             {/* Additional Settings */}
             <section className="editor-section toggle-section">
-                <div className="toggle-item">
+                <div className="toggle-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1rem' }}>
                     <div className="toggle-info">
                         <h3 className="editor-section-title">References</h3>
-                        <p className="toggle-description">Add "References available upon request" to the last page.</p>
+                        <p className="toggle-description">Where should "References available upon request" appear?</p>
                     </div>
-                    <label className="switch">
-                        <input
-                            type="checkbox"
-                            checked={cvData.preferences?.showReferences || false}
-                            onChange={(e) => updatePreferences('showReferences', e.target.checked)}
-                        />
-                        <span className="slider round"></span>
-                    </label>
+                    <div className="segmented-control" style={{ display: 'flex', gap: '0.5rem', width: '100%', background: '#eee', padding: '4px', borderRadius: '50px' }}>
+                        {['none', 'page1', 'page2'].map((option) => (
+                            <button
+                                key={option}
+                                onClick={() => updatePreferences('referencesPage', option)}
+                                style={{
+                                    flex: 1,
+                                    padding: '8px 12px',
+                                    borderRadius: '50px',
+                                    border: 'none',
+                                    fontSize: '0.85rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    background: (cvData.preferences?.referencesPage || 'none') === option ? '#fff' : 'transparent',
+                                    color: (cvData.preferences?.referencesPage || 'none') === option ? '#2563eb' : '#666',
+                                    boxShadow: (cvData.preferences?.referencesPage || 'none') === option ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                {option === 'none' ? 'None' : option === 'page1' ? 'Page 1' : 'Page 2'}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </section>
         </div>
