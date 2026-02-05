@@ -398,6 +398,7 @@ const A4Page = () => {
     const renderHeader = () => (
         <header className="cv-header">
             <h1 className="cv-name">{displayData.personal.name}</h1>
+            {displayData.personal.title && <div className="cv-title">{displayData.personal.title}</div>}
             <div className="cv-contact">
                 {displayData.personal.phone && <span>{displayData.personal.phone}</span>}
                 {displayData.personal.phone && displayData.personal.email && <span className="separator"> – </span>}
