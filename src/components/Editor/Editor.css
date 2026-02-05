@@ -309,6 +309,7 @@
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important;
     padding: 2.5rem !important;
+    max-width: 95vw !important;
 }
 
 .swal-confirm-btn {
@@ -363,4 +364,39 @@
 .swal2-image {
     margin: 0 auto 1.5rem !important;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+}
+
+/* Mobile Adjustments for SweetAlert2 */
+@media screen and (max-width: 480px) {
+    .premium-popup {
+        padding: 1.5rem !important;
+        width: 90% !important;
+        border-radius: 20px !important;
+    }
+
+    .swal2-title {
+        font-size: 1.4rem !important;
+    }
+
+    .swal2-html-container {
+        font-size: 0.9rem !important;
+    }
+
+    .swal2-actions {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    .swal-confirm-btn,
+    .swal-cancel-btn {
+        width: 100% !important;
+        margin: 5px 0 !important;
+        padding: 12px 20px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .swal2-image {
+        max-width: 60px !important;
+        margin-bottom: 1rem !important;
+    }
 }
