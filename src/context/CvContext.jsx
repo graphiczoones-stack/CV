@@ -29,6 +29,9 @@ const INITIAL_DATA = {
   courses: [],
   projects: [],
   activities: [],
+  preferences: {
+    showReferences: false,
+  },
 };
 
 export const CvProvider = ({ children }) => {
@@ -242,6 +245,13 @@ export const CvProvider = ({ children }) => {
     }));
   };
 
+  const updatePreferences = (field, value) => {
+    setCvData(prev => ({
+      ...prev,
+      preferences: { ...prev.preferences, [field]: value },
+    }));
+  };
+
   return (
     <CvContext.Provider
       value={{
@@ -266,6 +276,7 @@ export const CvProvider = ({ children }) => {
         addLink,
         updateLink,
         removeLink,
+        updatePreferences,
       }}
     >
       {children}

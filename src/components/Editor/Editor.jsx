@@ -56,6 +56,7 @@ const Editor = () => {
         addActivity,
         updateActivity,
         removeActivity,
+        updatePreferences,
     } = useCv();
 
     const handleResponsibilityChange = (expId, index, value) => {
@@ -550,6 +551,24 @@ const Editor = () => {
                         </div>
                     </div>
                 ))}
+            </section>
+
+            {/* Additional Settings */}
+            <section className="editor-section toggle-section">
+                <div className="toggle-item">
+                    <div className="toggle-info">
+                        <h3 className="editor-section-title">References</h3>
+                        <p className="toggle-description">Add "References available upon request" to the last page.</p>
+                    </div>
+                    <label className="switch">
+                        <input
+                            type="checkbox"
+                            checked={cvData.preferences?.showReferences || false}
+                            onChange={(e) => updatePreferences('showReferences', e.target.checked)}
+                        />
+                        <span className="slider round"></span>
+                    </label>
+                </div>
             </section>
         </div>
     );

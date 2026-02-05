@@ -497,6 +497,11 @@ const A4Page = () => {
                                 Content can be moved here
                             </div>
                         )}
+                        {cvData.preferences?.showReferences && (
+                            <div className="references-section">
+                                <p className="references-text">References available upon request</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

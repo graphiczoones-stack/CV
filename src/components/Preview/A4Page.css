@@ -378,3 +378,22 @@
         display: none !important;
     }
 }
+
+/* References Section */
+.references-section {
+    position: absolute;
+    bottom: 5mm;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    margin: 0 10mm;
+}
+
+.references-text {
+    font-size: 0.8rem;
+    color: #666;
+    font-style: italic;
+    margin: 0;
+}
