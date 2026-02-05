@@ -8,7 +8,10 @@ import DownloadDropdown from './DownloadDropdown';
 const Editor = () => {
     const handleDownloadPDF = async (option) => {
         if (option) {
-            await exportToPDF(option, 'My_CV.pdf');
+            const fileName = cvData.personal.name
+                ? `${cvData.personal.name.replace(/\s+/g, '_')}_CV.pdf`
+                : 'My_CV.pdf';
+            await exportToPDF(option, fileName);
 
             // Show SweetAlert popup after download
             Swal.fire({
