@@ -34,10 +34,7 @@ const INITIAL_DATA = {
     page1: ['summary', 'education', 'experience', 'projects'],
     page2: ['activities', 'courses', 'skills', 'languages'],
   },
-  preferences: {
-    showReferences: false,
-    referencesPlacement: 'none', // 'none', 'page1', 'page2'
-  },
+  preferences: {},
 };
 
 export const CvProvider = ({ children }) => {
@@ -75,7 +72,7 @@ export const CvProvider = ({ children }) => {
         }
       });
 
-      // Add missing sections to page 2 (including new ones like languages/references)
+      // Add missing sections to page 2 (including new ones like languages)
       allKnownSections.forEach(s => {
         if (!seen.has(s)) {
           finalP2.push(s);
@@ -265,12 +262,12 @@ export const CvProvider = ({ children }) => {
     }));
   };
 
-  const addLanguage = () => {
+  const addLanguage = (id = Date.now()) => {
     setCvData(prev => ({
       ...prev,
       languages: [
         ...(prev.languages || []),
-        { id: Date.now(), name: '', level: 'Fluent' },
+        { id, name: '', level: 'Fluent' },
       ],
     }));
   };

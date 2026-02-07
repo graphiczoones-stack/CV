@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useCv } from '../../context/CvContext';
 import './A4Page.css';
@@ -151,18 +151,6 @@ const A4Page = () => {
     const page1Sections = cvData.sections?.page1 || ['summary', 'education', 'experience', 'projects'];
     const page2Sections = cvData.sections?.page2 || ['activities', 'courses', 'skills', 'languages'];
 
-    const referencesPlacement = cvData.preferences?.referencesPlacement || 'none';
-    const referencesText = cvData.preferences?.referencesText || 'References available upon request';
-
-    const renderFooter = (pageNum) => {
-        if (referencesPlacement !== `page${pageNum}`) return null;
-
-        return (
-            <div className="cv-footer">
-                <p>{referencesText}</p>
-            </div>
-        );
-    };
 
     // Responsive Scaling Logic
     const [scale, setScale] = useState(1);
@@ -319,7 +307,7 @@ const A4Page = () => {
                                         <div className="skills-list-inline">
                                             {displayData.skills.technical.map((skill, idx) => (
                                                 <span key={idx} className="skills-item">
-                                                    {skill}{idx < displayData.skills.technical.length - 1 && ', '}
+                                                    <span style={{ marginRight: '0.3rem', fontSize: '1.2em', lineHeight: 0 }}>•</span> {skill}
                                                 </span>
                                             ))}
                                         </div>
@@ -331,7 +319,7 @@ const A4Page = () => {
                                         <div className="skills-list-inline">
                                             {displayData.skills.soft.map((skill, idx) => (
                                                 <span key={idx} className="skills-item">
-                                                    {skill}{idx < displayData.skills.soft.length - 1 && ', '}
+                                                    <span style={{ marginRight: '0.3rem', fontSize: '1.2em', lineHeight: 0 }}>•</span> {skill}
                                                 </span>
                                             ))}
                                         </div>
@@ -345,22 +333,34 @@ const A4Page = () => {
                     return (displayData.projects && displayData.projects.length > 0) ? (
                         <>
                             <h2 className="section-title">Projects</h2>
-                            {displayData.projects.map(project => (
-                                <div key={project.id} className="project-item">
-                                    <div style={{ fontWeight: 'bold' }}>
-                                        {project.name}
-                                        {project.link && (
-                                            <>
-                                                {' - '}
-                                                <a href={formatUrl(project.link)} target="_blank" rel="noopener noreferrer" className="cv-link">
-                                                    {project.link}
-                                                </a>
-                                            </>
+                            <div className="projects-list-inline">
+                                {displayData.projects.map((project, idx) => (
+                                    <React.Fragment key={project.id}>
+                                        <span className="project-inline-item">
+                                            <span className="project-block">
+                                                <span className="project-name" style={{ fontWeight: 'bold' }}>
+                                                    {project.name}
+                                                    {project.link && (
+                                                        <a href={formatUrl(project.link)} target="_blank" rel="noopener noreferrer" className="cv-link project-link">
+                                                            {' '}({project.link})
+                                                        </a>
+                                                    )}
+                                                </span>
+                                                {project.description && (
+                                                    <span className="project-desc-block">
+                                                        {project.description.length > 40
+                                                            ? project.description.substring(0, 40) + '...'
+                                                            : project.description}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </span>
+                                        {idx < displayData.projects.length - 1 && (
+                                            <span className="project-separator-inline"> | </span>
                                         )}
-                                    </div>
-                                    {project.description && <p>{project.description}</p>}
-                                </div>
-                            ))}
+                                    </React.Fragment>
+                                ))}
+                            </div>
                         </>
                     ) : null;
 
@@ -474,7 +474,6 @@ const A4Page = () => {
                             {page1Sections.map((sectionId, index) =>
                                 renderSection(sectionId, index, page1Sections.length, 1)
                             )}
-                            {renderFooter(1)}
                         </div>
                     </div>
 
@@ -484,7 +483,6 @@ const A4Page = () => {
                             {page2Sections.map((sectionId, index) =>
                                 renderSection(sectionId, index, page2Sections.length, 2)
                             )}
-                            {renderFooter(2)}
                             {page2Sections.length === 0 && (
                                 <div style={{
                                     display: 'flex',
