@@ -72,17 +72,22 @@ const Editor = () => {
     } = useCv();
 
     const handleDownloadPDF = async (option = 'all') => {
+        // Save original title
+        const originalTitle = document.title;
+        // Set title to person name for filename
+        document.title = cvData.personal.name || 'CV';
+
         // Set print mode attribute to control visibility via CSS
         document.body.setAttribute('data-print-mode', option);
 
         // Trigger browser print
         window.print();
 
-        // Clear attribute after a short delay (optional, but good for cleanup)
+        // Restore original title and clear attribute
         setTimeout(() => {
+            document.title = originalTitle;
             document.body.removeAttribute('data-print-mode');
         }, 1000);
-
     };
 
     const page2Sections = cvData.sections?.page2 || ['activities', 'courses', 'skills'];
