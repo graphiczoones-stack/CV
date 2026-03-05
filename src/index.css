@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+@font-face {
+  font-family: 'SST Arabic';
+  src: url('./assets/font/SST_Arabic-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --primary-color: #2563eb;
   --secondary-color: #1e40af;
@@ -28,6 +36,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* SST Arabic for Website UI (Excluding A4 Preview) */
+[class*="editor"] .rtl,
+[class*="editor"].rtl,
+.rtl:not(.a4-page):not(.a4-page *),
+.floating-controls .rtl {
+  font-family: 'SST Arabic', 'Inter', sans-serif !important;
+}
+
+/* Explicitly keep A4 formal */
+.a4-page.rtl,
+.a4-page.rtl * {
+  font-family: 'Inter', Arial, sans-serif !important;
+}
+
 #root {
   min-height: 100vh;
 }
@@ -45,17 +67,17 @@ button {
   body {
     background: white;
   }
-  
+
   .no-print {
     display: none !important;
   }
-  
+
   .a4-page {
     box-shadow: none !important;
     margin: 0 !important;
     page-break-after: always;
   }
-  
+
   @page {
     size: A4;
     margin: 0;

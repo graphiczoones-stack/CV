@@ -3,6 +3,23 @@
     overflow-y: auto;
     padding: 2rem;
     background: white;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.editor::-webkit-scrollbar {
+    display: none;
+}
+
+.editor.rtl {
+    text-align: right;
+    direction: rtl;
+}
+
+.editor.rtl input,
+.editor.rtl textarea {
+    direction: rtl !important;
+    text-align: right !important;
 }
 
 .editor-header {
@@ -12,6 +29,7 @@
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--border-color);
+    direction: ltr !important;
 }
 
 .editor-logo {
@@ -44,24 +62,26 @@
 .ai-trigger-btn {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    justify-content: center;
+    gap: 0.5rem;
     background-color: white;
-    color: var(--text-dark);
-    padding: 0.75rem 1.25rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 99px;
+    color: #374151;
+    height: 42px;
+    padding: 0 1.2rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-right: 1rem;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+    position: relative;
 }
 
 .ai-trigger-btn:hover {
     border-color: #6366f1;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
-    transform: translateY(-1px);
+    background: #f8faff;
     color: #6366f1;
 }
 
@@ -73,7 +93,7 @@
 /* AI Tooltip "Pop" Design */
 .ai-tooltip-pop {
     position: absolute;
-    top: calc(100% + 12px);
+    top: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%);
     background: #000;
@@ -96,12 +116,13 @@
 .ai-tooltip-pop::before {
     content: '';
     position: absolute;
-    top: -6px;
+    top: -8px;
     left: 50%;
     transform: translateX(-50%);
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid #000;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #000;
+    display: block !important;
 }
 
 .tooltip-close {
@@ -139,6 +160,7 @@
     position: relative;
     display: flex;
     align-items: center;
+    gap: 1rem;
 }
 
 /* Chic & Basic Download Button */
@@ -159,6 +181,11 @@
     background-repeat: no-repeat;
     background-position: right 1rem center;
     min-width: 180px;
+}
+
+.editor.rtl .download-select {
+    padding: 0.6rem 1.2rem 0.6rem 2.5rem;
+    background-position: left 1rem center;
 }
 
 .download-select:hover {
@@ -579,6 +606,10 @@ input:checked+.slider:before {
     flex: 1;
 }
 
+.editor.rtl .responsibility-item input {
+    text-align: right;
+}
+
 /* Responsive */
 @media screen and (max-width: 768px) {
     .editor {
@@ -586,35 +617,57 @@ input:checked+.slider:before {
     }
 
     .editor-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding-bottom: 1rem !important;
+        margin-bottom: 1.5rem !important;
+        gap: 0.5rem !important;
+    }
+
+    .editor-logo {
+        height: 24px !important;
     }
 
     .download-controls {
-        flex-direction: row-reverse !important;
-        /* Swap Download (Left) and AI (Right) */
-        justify-content: space-between;
-        width: 100%;
-        gap: 0;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+    }
+
+    .ai-trigger-btn,
+    .dropdown-trigger {
+        margin: 0 !important;
+        padding: 0 0.8rem !important;
+        font-size: 0.8rem !important;
+        height: 38px !important;
+        min-width: unset !important;
     }
 
     .ai-trigger-btn {
-        margin-right: 0 !important;
-        margin-left: 0 !important;
-        padding: 0.7rem 1.1rem !important;
-        flex: 0 0 auto;
+        direction: ltr !important;
+    }
+
+    .ai-btn-logo {
+        height: 16px !important;
     }
 
     .ai-tooltip-pop {
-        left: auto !important;
-        right: 0 !important;
-        transform: translateY(0) !important;
+        position: absolute !important;
+        top: calc(100% + 8px) !important;
+        bottom: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: max-content !important;
+        max-width: calc(100vw - 40px) !important;
+        white-space: nowrap !important;
+        z-index: 1000 !important;
     }
 
     .ai-tooltip-pop::before {
-        left: auto !important;
-        right: 20px !important;
+        top: -8px !important;
+        display: block !important;
     }
 
     .form-row {

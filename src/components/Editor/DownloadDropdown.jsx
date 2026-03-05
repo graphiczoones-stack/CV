@@ -1,8 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { Download, ChevronDown, FileText, Files, File } from 'lucide-react';
+import { useCv } from '../../context/CvContext';
+import translations from '../../utils/translations';
 import './DownloadDropdown.css';
 
 const DownloadDropdown = ({ onExport }) => {
+    const { cvData } = useCv();
+    const lang = cvData.preferences?.language || 'en';
+    const t = translations[lang];
+
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -29,7 +35,7 @@ const DownloadDropdown = ({ onExport }) => {
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <Download size={18} />
-                <span>Download PDF</span>
+                <span>{t.downloadPdf}</span>
                 <ChevronDown size={16} className={`chevron ${isOpen ? 'rotate' : ''}`} />
             </button>
 
@@ -37,15 +43,11 @@ const DownloadDropdown = ({ onExport }) => {
                 <div className="dropdown-menu">
                     <div className="dropdown-item" onClick={() => handleSelect('all')}>
                         <Files size={16} />
-                        <span>All Pages</span>
+                        <span>{t.allPages}</span>
                     </div>
                     <div className="dropdown-item" onClick={() => handleSelect('page1')}>
                         <FileText size={16} />
-                        <span>Page 1 Only</span>
-                    </div>
-                    <div className="dropdown-item" onClick={() => handleSelect('page2')}>
-                        <File size={16} />
-                        <span>Page 2 Only</span>
+                        <span>{t.page1Only}</span>
                     </div>
                 </div>
             )}

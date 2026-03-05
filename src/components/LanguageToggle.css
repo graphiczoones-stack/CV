@@ -1,0 +1,82 @@
+.floating-controls {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.language-toggle-premium {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 0 1.2rem;
+    height: 42px;
+    min-width: 115px;
+    border-radius: 99px;
+    font-weight: 600;
+    color: #111827;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.language-toggle-premium:hover {
+    border-color: #2563eb;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+    transform: translateY(-2px);
+    color: #2563eb;
+}
+
+.language-toggle-premium:active {
+    transform: translateY(0);
+}
+
+.language-toggle-premium svg {
+    color: #6b7280;
+    transition: color 0.2s;
+}
+
+.language-toggle-premium:hover svg {
+    color: #2563eb;
+}
+
+/* RTL Specificity */
+.main-layout.rtl .floating-controls {
+    right: 1rem;
+    left: auto;
+    flex-direction: row;
+    /* Keep standard order or row-reverse? usually right-aligned is better for RTL */
+}
+
+/* Mobile responsive */
+@media screen and (max-width: 768px) {
+    .floating-controls {
+        bottom: 1.5rem;
+        right: 1rem;
+        left: auto;
+        gap: 0.5rem;
+    }
+
+    .language-toggle-premium {
+        padding: 0 0.8rem;
+        font-size: 0.8rem;
+        height: 38px;
+        min-width: 100px;
+        gap: 0.4rem;
+    }
+}
+
+/* Hide on print */
+@media print {
+    .language-toggle-premium {
+        display: none !important;
+    }
+}

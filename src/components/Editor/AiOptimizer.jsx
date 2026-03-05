@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Sparkles, Key, Briefcase, Check, AlertCircle, Wand2, HelpCircle, ExternalLink } from 'lucide-react';
 import { useCv } from '../../context/CvContext';
+import translations from '../../utils/translations';
 import './AiOptimizer.css';
 
 const AiOptimizer = ({ isOpen, onClose }) => {
     const { cvData, updatePersonal, updateExperience, updateSkills } = useCv();
+    const lang = cvData.preferences?.language || 'en';
+    const t = translations[lang];
+
     const [apiKey, setApiKey] = useState('');
     const [jobDescription, setJobDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -47,11 +51,11 @@ const AiOptimizer = ({ isOpen, onClose }) => {
 
     const handleOptimize = async () => {
         if (!apiKey) {
-            setError('Please enter a valid Gemini API Key.');
+            setError(lang === 'ar' ? 'يرجى إدخال مفتاح Gemini API صالح.' : 'Please enter a valid Gemini API Key.');
             return;
         }
         if (!jobDescription.trim()) {
-            setError('Please enter a Job Description.');
+            setError(lang === 'ar' ? 'يرجى إدخال وصف الوظيفة.' : 'Please enter a Job Description.');
             return;
         }
 
@@ -178,17 +182,22 @@ const AiOptimizer = ({ isOpen, onClose }) => {
 
     if (!isOpen && !isClosing) return null;
 
+    const isAr = lang === 'ar';
     const apiKeyStored = !!localStorage.getItem('gemini_api_key');
 
     const modalContent = (
         <div className={`ai-optimizer-overlay ${isClosing ? 'is-closing' : ''}`} onClick={handleClose}>
-            <div className={`ai-optimizer-drawer ${isClosing ? 'is-closing' : ''}`} onClick={e => e.stopPropagation()}>
+            <div
+                className={`ai-optimizer-drawer ${isClosing ? 'is-closing' : ''} ${isAr ? 'rtl' : ''}`}
+                onClick={e => e.stopPropagation()}
+                dir={isAr ? 'rtl' : 'ltr'}
+            >
                 <div className="mobile-handle"></div>
                 <div className="ai-header">
                     <div className="ai-header-title">
                         <img src="/logo.svg" alt="Pro" className="ai-header-logo" />
-                        <span className="pro-tag">Pro</span>
-                        <span className="ai-sub-title">AI Optimizer</span>
+                        <span className="pro-tag">{t.pro}</span>
+                        <span className="ai-sub-title">{t.aiOptimizer}</span>
                     </div>
                     <div className="ai-header-actions">
                         <button
@@ -207,18 +216,18 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                     <div className="api-help-box">
                         <div className="help-header">
                             <Key size={16} />
-                            <span>How to get Gemini API Key?</span>
+                            <span>{t.howToGetApiKey}</span>
                         </div>
                         <ol className="help-steps">
-                            <li>Go to <strong>Google AI Studio</strong>.</li>
-                            <li>Sign in with Google.</li>
-                            <li>Click <strong>"Get API key"</strong>.</li>
-                            <li>Click <strong>"Create API key"</strong>.</li>
-                            <li>Copy and paste the key here.</li>
+                            <li>{t.openStudio} <strong>{t.apiStudio}</strong>.</li>
+                            <li>{t.signinGoogle}.</li>
+                            <li>{t.clickGetApiKey}.</li>
+                            <li>{t.clickCreateApiKey}.</li>
+                            <li>{t.copyPasteKey}.</li>
                         </ol>
                         <div className="help-footer">
                             <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
-                                Open Studio <ExternalLink size={12} />
+                                {t.openStudio} <ExternalLink size={12} />
                             </a>
                         </div>
                     </div>
@@ -226,26 +235,26 @@ const AiOptimizer = ({ isOpen, onClose }) => {
 
                 <div className="ai-content">
                     <div className="ai-section">
-                        <h3><Key size={16} /> Gemini API Key</h3>
+                        <h3><Key size={16} /> {t.apiKey}</h3>
                         <div className="api-key-input-group">
                             <input
                                 type="password"
                                 className="api-key-input"
-                                placeholder="Paste your API Key here..."
+                                placeholder={t.apiKeyPlaceholder}
                                 value={apiKey}
                                 onChange={handleApiKeyChange}
                             />
                             <button className="get-key-btn" onClick={() => window.open('https://aistudio.google.com/app/apikey', '_blank')}>
-                                Get Key <ExternalLink size={14} />
+                                {t.getKey} <ExternalLink size={14} />
                             </button>
                         </div>
                     </div>
 
                     <div className="ai-section">
-                        <h3><Briefcase size={16} /> Job Description</h3>
+                        <h3><Briefcase size={16} /> {t.jobDesc}</h3>
                         <textarea
                             className="job-description-input"
-                            placeholder="Paste the job description here..."
+                            placeholder={t.jobDescPlaceholder}
                             value={jobDescription}
                             onChange={(e) => setJobDescription(e.target.value)}
                         />
@@ -254,7 +263,7 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                             onClick={handleOptimize}
                             disabled={isLoading || !jobDescription}
                         >
-                            {isLoading ? <div className="loading-spinner"></div> : <><Wand2 size={18} /> Optimize My CV</>}
+                            {isLoading ? <div className="loading-spinner"></div> : <><Wand2 size={18} /> {t.optimizeBtn}</>}
                         </button>
                     </div>
 
@@ -268,7 +277,7 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                     {suggestions && (
                         <div className="suggestions-container">
                             <div className="ai-section">
-                                <h3>AI Content Suggestions</h3>
+                                <h3>{t.suggestions}</h3>
 
                                 {suggestions.recommended_job_title && (
                                     <div className="suggestion-card">
@@ -280,7 +289,7 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                                                     onClick={() => applyJobTitle(suggestions.recommended_job_title)}
                                                     disabled={inlineFeedback['jobTitle']}
                                                 >
-                                                    {inlineFeedback['jobTitle'] ? <><Check size={14} /> Applied</> : 'Apply'}
+                                                    {inlineFeedback['jobTitle'] ? <><Check size={14} /> {t.applied}</> : t.apply}
                                                 </button>
                                             </div>
                                         </div>
@@ -291,14 +300,14 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                                 {suggestions.summary && (
                                     <div className="suggestion-card">
                                         <div className="suggestion-header">
-                                            <div className="suggestion-title">Professional Summary</div>
+                                            <div className="suggestion-title">{t.profSummary}</div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                 <button
                                                     className={`apply-btn ${inlineFeedback['summary'] ? 'applied' : ''}`}
                                                     onClick={() => applySummary(suggestions.summary)}
                                                     disabled={inlineFeedback['summary']}
                                                 >
-                                                    {inlineFeedback['summary'] ? <><Check size={14} /> Applied</> : 'Apply'}
+                                                    {inlineFeedback['summary'] ? <><Check size={14} /> {t.applied}</> : t.apply}
                                                 </button>
                                             </div>
                                         </div>
@@ -309,14 +318,14 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                                 {suggestions.technical_skills_to_add?.length > 0 && (
                                     <div className="suggestion-card">
                                         <div className="suggestion-header">
-                                            <div className="suggestion-title">Technical Skills</div>
+                                            <div className="suggestion-title">{t.techSkills}</div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                 <button
                                                     className={`apply-btn ${inlineFeedback['techSkills'] ? 'applied' : ''}`}
                                                     onClick={() => applyTechnicalSkills(suggestions.technical_skills_to_add)}
                                                     disabled={inlineFeedback['techSkills']}
                                                 >
-                                                    {inlineFeedback['techSkills'] ? <><Check size={14} /> Added</> : 'Add All'}
+                                                    {inlineFeedback['techSkills'] ? <><Check size={14} /> {t.added}</> : t.addAll}
                                                 </button>
                                             </div>
                                         </div>
@@ -331,14 +340,14 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                                 {suggestions.soft_skills_to_add?.length > 0 && (
                                     <div className="suggestion-card">
                                         <div className="suggestion-header">
-                                            <div className="suggestion-title">Soft Skills</div>
+                                            <div className="suggestion-title">{t.softSkillsLabelSuggestion}</div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                 <button
                                                     className={`apply-btn ${inlineFeedback['softSkills'] ? 'applied' : ''}`}
                                                     onClick={() => applySoftSkills(suggestions.soft_skills_to_add)}
                                                     disabled={inlineFeedback['softSkills']}
                                                 >
-                                                    {inlineFeedback['softSkills'] ? <><Check size={14} /> Added</> : 'Add All'}
+                                                    {inlineFeedback['softSkills'] ? <><Check size={14} /> {t.added}</> : t.addAll}
                                                 </button>
                                             </div>
                                         </div>
@@ -353,7 +362,7 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                                 {suggestions.recommended_certifications?.length > 0 && (
                                     <div className="suggestion-card info-card">
                                         <div className="suggestion-header">
-                                            <div className="suggestion-title">Recommended Certifications</div>
+                                            <div className="suggestion-title">{t.recCertifications}</div>
                                         </div>
                                         <ul className="help-steps" style={{ paddingLeft: '1.2rem', margin: 0 }}>
                                             {suggestions.recommended_certifications.map((cert, idx) => (
@@ -366,7 +375,7 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                                 {suggestions.courses?.length > 0 && (
                                     <div className="suggestion-card info-card">
                                         <div className="suggestion-header">
-                                            <div className="suggestion-title">Suggested Courses</div>
+                                            <div className="suggestion-title">{t.sugCourses}</div>
                                         </div>
                                         <ul className="help-steps" style={{ paddingLeft: '1.2rem', margin: 0 }}>
                                             {suggestions.courses.map((course, idx) => (
@@ -379,7 +388,7 @@ const AiOptimizer = ({ isOpen, onClose }) => {
                                 {suggestions.experience_recommendations?.length > 0 && (
                                     <div className="suggestion-card info-card">
                                         <div className="suggestion-header">
-                                            <div className="suggestion-title">Experience Recommendations</div>
+                                            <div className="suggestion-title">{t.expRecs}</div>
                                         </div>
                                         <div className="experience-tips">
                                             {suggestions.experience_recommendations.map((exp, idx) => (

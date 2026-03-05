@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useCv } from '../../context/CvContext';
+import translations from '../../utils/translations';
 import './A4Page.css';
 
 // Dummy Data for Placeholder Preview
-const DUMMY_DATA = {
+const DUMMY_DATA_EN = {
     personal: {
         name: 'John Doe',
         title: 'Senior Software Engineer',
@@ -93,16 +94,105 @@ const DUMMY_DATA = {
     ],
 };
 
+const DUMMY_DATA_AR = {
+    personal: {
+        name: 'أحمد محمد',
+        title: 'مهندس برمجيات أول',
+        email: 'ahmed.mohamed@example.com',
+        phone: '+20 123 456 7890',
+        location: 'الجيزة، مصر',
+        summary: 'مهندس برمجيات ذو خبرة تزيد عن 8 سنوات في تطوير الويب المتكامل، متخصص في React و Node.js وتقنيات السحاب. شغوف ببناء تطبيقات قابلة للتوسع وقيادة فرق التطوير.',
+        links: [
+            { id: 1, label: 'LinkedIn', url: 'https://linkedin.com/in/ahmedmohamed' },
+            { id: 2, label: 'المعرض الشخصي', url: 'https://ahmed.dev' },
+        ],
+    },
+    education: [
+        {
+            id: 1,
+            degree: 'بكالوريوس علوم الحاسب',
+            institution: 'جامعة القاهرة',
+            location: 'الجيزة، مصر',
+            startDate: '2012',
+            endDate: '2016',
+            description: 'معدل تراكمي: 3.8/4.0. المواد الدراسية: هياكل البيانات، الخوارزميات، نظم قواعد البيانات، تطوير الويب',
+        },
+    ],
+    experience: [
+        {
+            id: 1,
+            position: 'مهندس برمجيات أول',
+            company: 'شركة تيك كورب',
+            location: 'القاهرة، مصر',
+            startDate: 'يناير 2020',
+            endDate: 'الحالي',
+            responsibilities: [
+                'قيادة تطوير هندسة الخدمات المصغرة التي تخدم أكثر من 10 ملايين مستخدم',
+                'توجيه المطورين المبتدئين وإجراء مراجعات الكود',
+                'تقليل وقت استجابة الـ API بنسبة 40% من خلال التحسين',
+                'تنفيذ خطوط أنابيب CI/CD مما قلل من وقت النشر بنسبة 60%',
+            ],
+        },
+        {
+            id: 2,
+            position: 'مهندس برمجيات',
+            company: 'حلول الشركات الناشئة',
+            location: 'القاهرة، مصر',
+            startDate: 'يونيو 2016',
+            endDate: 'ديسمبر 2019',
+            responsibilities: [
+                'تطوير تطبيقات ويب متكاملة باستخدام React و Node.js',
+                'التعاون مع المصممين لتنفيذ واجهة وتجربة مستخدم مستجيبة',
+                'دمج تطبيقات الطرف الثالث وأنظمة الدفع',
+            ],
+        },
+    ],
+    skills: {
+        technical: ['JavaScript', 'React', 'Node.js', 'Python', 'SQL', 'AWS', 'Docker', 'Git'],
+        soft: ['القيادة', 'حل المشكلات', 'التواصل', 'التطوير المرن (Agile)'],
+    },
+    courses: [
+        {
+            id: 1,
+            name: 'معماري حلول معتمد من AWS',
+            provider: 'أمازون لخدمات الويب',
+            year: '2022',
+            hours: '40 ساعة',
+            link: 'https://aws.amazon.com/certification/',
+        },
+    ],
+    projects: [
+        {
+            id: 1,
+            name: 'منصة تجارة إلكترونية',
+            description: 'بناء موقع تجارة إلكترونية كامل الميزات باستخدام React و Node.js.',
+            link: 'https://github.com/ahmed/ecommerce',
+        }
+    ],
+    activities: [
+        {
+            id: 1,
+            name: 'متطوع في المجتمع التقني',
+            role: 'منظم فعاليات',
+            description: 'تنظيم لقاءات شهرية للمطورين المحليين.',
+        }
+    ],
+    languages: [
+        { id: 1, name: 'العربية', level: 'اللغة الأم' },
+        { id: 2, name: 'الإنجليزية', level: 'طليق' },
+    ],
+};
+
 // Section Component with Arrow Controls
-const CvSection = ({ id, children, onMoveUp, onMoveDown, isFirst, isLast }) => {
+const CvSection = ({ id, children, onMoveUp, onMoveDown, isFirst, isLast, t }) => {
     return (
-        <div className="cv-section">
-            <div className="section-controls no-print">
+        <div className="cv-section" id={`tour-preview-section-${id}`}>
+            <div className="section-controls no-print" id={`tour-preview-controls-${id}`}>
                 <button
                     onClick={onMoveUp}
                     disabled={isFirst}
                     className="control-btn"
-                    title="Move Up"
+                    title={t.moveUp}
                 >
                     <ArrowUp size={14} />
                 </button>
@@ -110,7 +200,7 @@ const CvSection = ({ id, children, onMoveUp, onMoveDown, isFirst, isLast }) => {
                     onClick={onMoveDown}
                     disabled={isLast}
                     className="control-btn"
-                    title="Move Down"
+                    title={t.moveDown}
                 >
                     <ArrowDown size={14} />
                 </button>
@@ -137,7 +227,11 @@ const A4Page = () => {
     // If the user has entered ANY information, we exit demo mode
     const isDemoMode = !hasPersonalData && !hasEducation && !hasExperience && !hasSkills && !hasProjects && !hasCourses && !hasActivities && !hasLanguages;
 
+    const lang = cvData.preferences?.language || 'en';
+    const isAr = lang === 'ar';
+    const DUMMY_DATA = isAr ? DUMMY_DATA_AR : DUMMY_DATA_EN;
     const displayData = isDemoMode ? DUMMY_DATA : cvData;
+    const t = translations[lang];
 
     const formatUrl = (url) => {
         if (!url) return '';
@@ -195,7 +289,7 @@ const A4Page = () => {
                 case 'summary':
                     return displayData.personal.summary ? (
                         <>
-                            <h2 className="section-title">Professional Summary</h2>
+                            <h2 className="section-title">{t.summary}</h2>
                             <p className="summary-text">{displayData.personal.summary}</p>
                         </>
                     ) : null;
@@ -203,7 +297,7 @@ const A4Page = () => {
                 case 'education':
                     return displayData.education.length > 0 ? (
                         <>
-                            <h2 className="section-title">Education</h2>
+                            <h2 className="section-title">{t.education}</h2>
                             {displayData.education.map(edu => (
                                 <div key={edu.id} className="education-item">
                                     <div className="edu-header">
@@ -220,7 +314,7 @@ const A4Page = () => {
                                         )}
                                     </div>
                                     {edu.location && (
-                                        <p style={{ fontSize: '0.85rem', fontStyle: 'italic', margin: '0.125rem 0' }}>
+                                        <p style={{ fontSize: '0.85rem', fontStyle: 'italic', margin: isAr ? '0.125rem 0.2rem 0.125rem 0' : '0.125rem 0 0.125rem 0.2rem' }}>
                                             {edu.location}
                                         </p>
                                     )}
@@ -233,14 +327,14 @@ const A4Page = () => {
                 case 'experience':
                     return displayData.experience.length > 0 ? (
                         <>
-                            <h2 className="section-title">Experience</h2>
+                            <h2 className="section-title">{t.experience}</h2>
                             {displayData.experience.map(exp => (
                                 <div key={exp.id} className="experience-item">
                                     <div className="exp-header">
                                         <div className="exp-title-group">
                                             <span className="exp-position">{exp.position}</span>
                                             {exp.company && (
-                                                <span className="exp-company"> at {exp.company}</span>
+                                                <span className="exp-company"> {t.at} {exp.company}</span>
                                             )}
                                         </div>
                                         {(exp.startDate || exp.endDate) && (
@@ -250,7 +344,7 @@ const A4Page = () => {
                                         )}
                                     </div>
                                     {exp.location && (
-                                        <p style={{ fontSize: '0.85rem', fontStyle: 'italic', margin: '0.125rem 0' }}>
+                                        <p style={{ fontSize: '0.85rem', fontStyle: 'italic', margin: isAr ? '0.125rem 0.2rem 0.125rem 0' : '0.125rem 0 0.125rem 0.2rem' }}>
                                             {exp.location}
                                         </p>
                                     )}
@@ -269,11 +363,11 @@ const A4Page = () => {
                 case 'courses':
                     return displayData.courses.length > 0 ? (
                         <>
-                            <h2 className="section-title">Certifications & Courses</h2>
+                            <h2 className="section-title">{t.certifications}</h2>
                             {displayData.courses.map(course => (
-                                <div key={course.id} className="course-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingLeft: '0.5rem' }}>
+                                <div key={course.id} className="course-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingLeft: isAr ? '0' : '0.5rem', paddingRight: isAr ? '0.5rem' : '0' }}>
                                     <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                                        <span style={{ marginRight: '0.5rem', fontSize: '10px', lineHeight: '0' }}>●</span>
+                                        <span style={{ marginLeft: isAr ? '0.5rem' : '0', marginRight: isAr ? '0' : '0.5rem', fontSize: '10px', lineHeight: '0' }}>●</span>
                                         <span>
                                             <span className="course-name" style={{ fontWeight: 'bold' }}>
                                                 {course.link ? (
@@ -299,15 +393,15 @@ const A4Page = () => {
                 case 'skills':
                     return (displayData.skills.technical.length > 0 || displayData.skills.soft.length > 0) ? (
                         <>
-                            <h2 className="section-title">Key Skills</h2>
+                            <h2 className="section-title">{t.keySkills}</h2>
                             <div className="skills-main-container">
                                 {displayData.skills.technical.length > 0 && (
                                     <div className="skills-group">
-                                        <span className="skills-label">Technical Skills</span>
+                                        <span className="skills-label">{t.technicalSkillsLabel}</span>
                                         <div className="skills-list-inline">
                                             {displayData.skills.technical.map((skill, idx) => (
                                                 <span key={idx} className="skills-item">
-                                                    <span style={{ marginRight: '0.3rem', fontSize: '1.2em', lineHeight: 0 }}>•</span> {skill}
+                                                    <span style={{ marginLeft: isAr ? '0.3rem' : '0', marginRight: isAr ? '0' : '0.3rem', fontSize: '1.2em', lineHeight: 0 }}>•</span> {skill}
                                                 </span>
                                             ))}
                                         </div>
@@ -315,11 +409,11 @@ const A4Page = () => {
                                 )}
                                 {displayData.skills.soft.length > 0 && (
                                     <div className="skills-group">
-                                        <span className="skills-label">Soft Skills</span>
+                                        <span className="skills-label">{t.softSkillsLabel}</span>
                                         <div className="skills-list-inline">
                                             {displayData.skills.soft.map((skill, idx) => (
                                                 <span key={idx} className="skills-item">
-                                                    <span style={{ marginRight: '0.3rem', fontSize: '1.2em', lineHeight: 0 }}>•</span> {skill}
+                                                    <span style={{ marginLeft: isAr ? '0.3rem' : '0', marginRight: isAr ? '0' : '0.3rem', fontSize: '1.2em', lineHeight: 0 }}>•</span> {skill}
                                                 </span>
                                             ))}
                                         </div>
@@ -332,7 +426,7 @@ const A4Page = () => {
                 case 'projects':
                     return (displayData.projects && displayData.projects.length > 0) ? (
                         <>
-                            <h2 className="section-title">Projects</h2>
+                            <h2 className="section-title">{t.projects}</h2>
                             <div className="projects-list-inline">
                                 {displayData.projects.map((project, idx) => (
                                     <React.Fragment key={project.id}>
@@ -367,7 +461,7 @@ const A4Page = () => {
                 case 'activities':
                     return (displayData.activities && displayData.activities.length > 0) ? (
                         <>
-                            <h2 className="section-title">Extracurricular Activities</h2>
+                            <h2 className="section-title">{t.activities}</h2>
                             {displayData.activities.map(activity => (
                                 <div key={activity.id} className="activity-item">
                                     <div style={{ fontWeight: 'bold' }}>{activity.name}</div>
@@ -381,7 +475,7 @@ const A4Page = () => {
                 case 'languages':
                     return (displayData.languages && displayData.languages.length > 0) ? (
                         <>
-                            <h2 className="section-title">Languages</h2>
+                            <h2 className="section-title">{t.languages}</h2>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                                 {displayData.languages.map(lang => (
                                     <div key={lang.id}>
@@ -406,6 +500,7 @@ const A4Page = () => {
                 onMoveDown={() => moveSection(sectionId, 'down')}
                 isFirst={isFirst}
                 isLast={isLast}
+                t={t}
             >
                 {content}
             </CvSection>
@@ -419,9 +514,9 @@ const A4Page = () => {
             {displayData.personal.title && <div className="cv-title">{displayData.personal.title}</div>}
             <div className="cv-contact">
                 {displayData.personal.phone && <span>{displayData.personal.phone}</span>}
-                {displayData.personal.phone && displayData.personal.email && <span className="separator"> – </span>}
+                {displayData.personal.phone && displayData.personal.email && <span className="separator"> | </span>}
                 {displayData.personal.email && <span>{displayData.personal.email}</span>}
-                {(displayData.personal.phone || displayData.personal.email) && displayData.personal.location && <span className="separator"> - </span>}
+                {(displayData.personal.phone || displayData.personal.email) && displayData.personal.location && <span className="separator"> | </span>}
                 {displayData.personal.location && <span>{displayData.personal.location}</span>}
             </div>
 
@@ -444,7 +539,7 @@ const A4Page = () => {
         <div className="a4-container">
             {pageWarning && (
                 <div className="page-warning no-print">
-                    ⚠️ Content exceeds recommended limits. Consider reducing content.
+                    {t.pageWarning}
                 </div>
             )}
 
@@ -469,7 +564,7 @@ const A4Page = () => {
                 >
                     {/* Page 1 */}
                     <div>
-                        <div className="a4-page" id="cv-content">
+                        <div className={`a4-page ${isAr ? 'rtl' : ''}`} id="cv-content">
                             {renderHeader()}
                             {page1Sections.map((sectionId, index) =>
                                 renderSection(sectionId, index, page1Sections.length, 1)
@@ -479,7 +574,7 @@ const A4Page = () => {
 
                     {/* Page 2 */}
                     <div>
-                        <div className="a4-page" id="cv-page-2">
+                        <div className={`a4-page ${isAr ? 'rtl' : ''}`} id="cv-page-2">
                             {page2Sections.map((sectionId, index) =>
                                 renderSection(sectionId, index, page2Sections.length, 2)
                             )}
@@ -493,7 +588,7 @@ const A4Page = () => {
                                     fontStyle: 'italic',
                                     fontSize: '0.875rem'
                                 }}>
-                                    Content can be moved here
+                                    {t.moveContentMsg}
                                 </div>
                             )}
                         </div>

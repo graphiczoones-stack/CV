@@ -6,26 +6,27 @@
 .dropdown-trigger {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    justify-content: center;
+    gap: 0.5rem;
     background: white;
-    border: 1px solid #e5e7eb;
-    padding: 0.75rem 1.25rem;
-    border-radius: 99px;
-    /* Pill shape */
+    border: 1.5px solid #e5e7eb;
+    height: 42px;
+    padding: 0 1.2rem;
+    border-radius: 12px;
     font-weight: 600;
-    color: var(--text-dark);
+    font-size: 0.85rem;
+    color: #374151;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    min-width: 180px;
-    justify-content: space-between;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
 }
 
 .dropdown-trigger:hover,
 .dropdown-trigger.active {
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-    color: var(--primary-color);
+    border-color: #2563eb;
+    background: #f8faff;
+    color: #2563eb;
 }
 
 .chevron {
@@ -66,6 +67,11 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+.editor.rtl .dropdown-menu {
+    right: 0;
+    transform-origin: top left;
 }
 
 .dropdown-item {

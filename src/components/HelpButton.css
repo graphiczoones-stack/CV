@@ -1,0 +1,115 @@
+.help-button-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.help-btn-round {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.help-btn-round:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.15);
+}
+
+/* Welcome Popover */
+.welcome-popover {
+    position: absolute;
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111827;
+    color: white;
+    padding: 0.85rem 1.25rem;
+    border-radius: 12px;
+    width: max-content;
+    max-width: 200px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    animation: popoverIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popoverIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+}
+
+@keyframes popoverInRtl {
+    0% {
+        opacity: 0;
+        transform: translateX(50%) translateY(10px) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(50%) translateY(0) scale(1);
+    }
+}
+
+.welcome-popover.rtl {
+    direction: rtl !important;
+    text-align: right !important;
+    left: auto;
+    right: 50%;
+    transform: translateX(50%);
+    animation: popoverInRtl 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.welcome-popover.rtl .popover-arrow {
+    left: auto;
+    right: 50%;
+    transform: translateX(50%);
+}
+
+.popover-arrow {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #111827;
+}
+
+@media screen and (max-width: 768px) {
+    .help-btn-round {
+        width: 38px;
+        height: 38px;
+    }
+
+    .welcome-popover {
+        left: -7px;
+        transform: none;
+    }
+
+    .popover-arrow {
+        left: 19px;
+        transform: none;
+    }
+}

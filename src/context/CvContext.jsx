@@ -34,10 +34,14 @@ const INITIAL_DATA = {
     page1: ['summary', 'education', 'experience', 'projects'],
     page2: ['activities', 'courses', 'skills', 'languages'],
   },
-  preferences: {},
+  preferences: {
+    language: 'en',
+  },
 };
 
 export const CvProvider = ({ children }) => {
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionCount, setTransitionCount] = useState(0);
   const [cvData, setCvData] = useState(() => {
     try {
       const savedData = localStorage.getItem('cvData');
@@ -390,6 +394,27 @@ export const CvProvider = ({ children }) => {
     }));
   };
 
+  const toggleLanguage = () => {
+    setIsTransitioning(true);
+    setTransitionCount(prev => prev + 1);
+
+    // Step 1: Wait for overlay to become fully opaque (approx 300ms)
+    setTimeout(() => {
+      setCvData(prev => {
+        const newLang = prev.preferences?.language === 'en' ? 'ar' : 'en';
+        return {
+          ...prev,
+          preferences: { ...prev.preferences, language: newLang },
+        };
+      });
+    }, 300);
+
+    // Step 2: Keep overlay visible while layout re-renders (total 1.2s)
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 1300);
+  };
+
   return (
     <CvContext.Provider
       value={{
@@ -419,6 +444,9 @@ export const CvProvider = ({ children }) => {
         removeLink,
         moveSection,
         updatePreferences,
+        toggleLanguage,
+        isTransitioning,
+        transitionCount,
       }}
     >
       {children}
